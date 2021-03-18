@@ -3,7 +3,7 @@
 # s-cemahn@uni-greifswald.de
 # Algorithm for combined retrieve of proteins and
 # prediction of their binding epitopes.
-# 11.02.2021: Development.
+# 17.03.2021: Development.
 #################################################
 
 
