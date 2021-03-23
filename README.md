@@ -1,5 +1,5 @@
 - 👋 Hi, I’m @cmahncke
-- 👀 I’m interested in medical and bioinformatic research
+- 👀 I’m interested in biomedical and bioinformatic research
 - 🌱 I’m currently learning biomathematics and human biology
 - 💞️ I’m looking to collaborate on research about auto immune diseases
 - 📫 How to reach me: s-cemahn@uni-greifswald.de
