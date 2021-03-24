@@ -1,9 +1,9 @@
 #################################################
 # Cedric Mahncke
 # s-cemahn@uni-greifswald.de
-# Algorithm for combined retrieve of proteins and
+# Algorithm for combined retrieve of proteomes and
 # prediction of their binding epitopes.
-# 17.03.2021: Development.
+# 24.03.2021: Product.
 #################################################
 
 
@@ -14,7 +14,7 @@ import utilities as ut
 from collections import Counter
 
 
-# To fill data dict with given strings
+# To fill data dict with given strings.
 def fill_data(s, a, length):
     data = {
         'method': 'netmhcpan',
@@ -25,29 +25,32 @@ def fill_data(s, a, length):
     return data
 
 
+# Main function to execute prediction by NetMHCpan.
 def exec_netmhcpan(uniprot, example, params):
-    # Dict with sequences
-    seq_dict = uniprot[0]
-    # Dict with signal peptides to look if epitope is in signal range.
-    sig_dict = uniprot[1]
-    # Dict with keys that have the same sequence
-    same_seq = uniprot[3]
-    #
-    redundant_del = uniprot[4]
-    # Dict with indices of epitopes located in the signal peptide
-    in_signal = {}
-    # List with epitopes for counting the frequency.
-    epi_list = []
-    epi_data = {}
-    # Storage for whole prediction data
-    data = {}
     print("NetMHCpan:")
+    # Dict containing sequences.
+    seq_dict = uniprot[0]
+    # Dict containing signal peptide ranges.
+    sig_dict = uniprot[1]
+    # Dict containing keys that have the same sequence.
+    same_seq = uniprot[3]
+    # Boolean about deletion of redundant sequences.
+    redundant_del = uniprot[4]
+    # Dict with indices of epitopes located in the signal peptide.
+    in_signal = {}
+    # List containing all epitopes.
+    epi_list = []
+    # Storage for prediction data by location.
+    epi_data = {}
+    # Storage for whole prediction data.
+    data = {}
     # Set parameters.
     allele, length, threshold, dumb = params
     del dumb
     params = {"Allel": allele, "Length": length, "Threshold": str(threshold)}
 
-    header = 'id,protein,density,sig density,position; epitope; score'
+    # Calculate amount of predictions for providing progress time and percentage.
+    # Prediction for redundant sequences does not affect progress time since their data is just copied.
     count_seqs = sum(len(seqs) for seqs in seq_dict.values())
     count_same_seqs = sum(len(seqs) for seqs in same_seq.values())
     if not redundant_del:
@@ -57,16 +60,19 @@ def exec_netmhcpan(uniprot, example, params):
     count = 0
     start = time.time()
 
+    # Iterate over locations.
     for loc_key in seq_dict:
         epi_data[loc_key] = {}
         in_signal[loc_key] = {}
 
+        # Iterate over IDs of the proteins.
         for gene_id in seq_dict[loc_key]:
             epi_data[loc_key][gene_id] = []
-            temp_epi_list = []
-            temp_epis = []
             in_signal[loc_key][gene_id] = []
+            protein_name = seq_dict[loc_key][gene_id][1]
 
+            # Check if an ID leading to an equal sequence exists.
+            # If so, paste its prediction data to this entry.
             if gene_id in same_seq[loc_key]:
                 equal_seq_id = same_seq[loc_key][gene_id]
                 if data[equal_seq_id]:
@@ -77,7 +83,7 @@ def exec_netmhcpan(uniprot, example, params):
                     ut.progress(count, count_seqs, count_all_predictions, start)
                     continue
 
-            # Request.
+            # Specify the parameters and POST it for prediction.
             seq = seq_dict[loc_key][gene_id][0]
             pred_params = fill_data(seq, allele, length)
             try:
@@ -86,66 +92,14 @@ def exec_netmhcpan(uniprot, example, params):
                 print("Connection Error at: " + gene_id)
                 break
 
-            # Information.
-            protein_name = seq_dict[loc_key][gene_id][1]
-            seq_len = len(seq)
-
             if response.ok:
-                # Remove header
-                lines = response.text.splitlines()[1:]
-
-                # Filter important information.
-                for line in lines:
-                    pred_data = line.split("\t")
-                    if len(pred_data) >= 8:
-                        position, epi, score = pred_data[2], pred_data[5], pred_data[9]
-                    else:
-                        break
-
-                    # Only take top scoring epi_datas. Threshold is 3.0.
-                    if float(score) <= threshold:
-                        # To list index of epitopes which are located in the signal peptide of the protein.
-                        # Set signal range for density calc.
-                        if sig_dict[loc_key][gene_id].isnumeric() and int(position) <= int(sig_dict[loc_key][gene_id]):
-                            in_signal[loc_key][gene_id].append(lines.index(line)+3)
-
-                        # Add filtered information to list and dictionary about epitopes.
-                        temp_epi_list.append(epi)
-                        temp_epis.append(position + "; " + epi + "; " + score)
-
-                # Append protein name for information.
-                epi_data[loc_key][gene_id].append(protein_name)
-
-                # Calculate epitope density.
-                # Overall.
-                epitopes_bound = len(temp_epis)
-                epitopes_total = seq_len - int(length) + 1
-                if epitopes_total > 0:
-                    density = epitopes_bound / epitopes_total
-                else:
-                    density = 0
-                # Store density with epitope data.
-                epi_data[loc_key][gene_id].append(density)
-
-                # In signal.
-                if sig_dict[loc_key][gene_id].isnumeric():
-                    # If signal is given as number, not 'N/A'.
-                    signal_length = sig_dict[loc_key][gene_id]
-                    signal_epitopes_bound = len(in_signal[loc_key][gene_id])
-                    signal_epitopes_total = int(signal_length) - int(length)
-                    if signal_epitopes_total > 0:
-                        signal_density = signal_epitopes_bound / signal_epitopes_total
-                    else: signal_density = 0
-                    # Store signal density with epitope data.
-                    epi_data[loc_key][gene_id].append(signal_density)
-                else:
-                    epi_data[loc_key][gene_id].append("N/A")
-
-                epi_data[loc_key][gene_id].extend(temp_epis)
-                epi_list.extend(temp_epi_list)
-                data[gene_id] = [temp_epi_list, epi_data[loc_key][gene_id], in_signal[loc_key][gene_id]]
-
+                # Filter important data, calculate densities and add everything to storages.
+                ut.request_handle(method="NetMHCpan", request=response, indices=[loc_key, gene_id],
+                                  pred_vars=[len(seq), length, threshold, False],
+                                  epi_storages=[epi_list, epi_data, data], signal_storages=[sig_dict, in_signal],
+                                  protein_name=protein_name)
             else:
+                # Print note at console and output file if the request is not okay.
                 print(loc_key, gene_id, "\tBad Answer!")
                 print(response.text)
                 epi_data[loc_key][gene_id] = [protein_name, "N/A", "N/A", "BAD ANSWER."]
@@ -154,7 +108,7 @@ def exec_netmhcpan(uniprot, example, params):
             count += 1
             ut.progress(count, count_seqs, count_all_predictions, start)
 
-    # Counted appearance of every epitope.
+    # Count appearance of each epitope.
     frequencies = dict(sorted(Counter(epi_list).items(), key=operator.itemgetter(1), reverse=True))
 
     # Filename input
@@ -167,5 +121,6 @@ def exec_netmhcpan(uniprot, example, params):
         else:
             filename = "netMHCpan_data.xlsx"
 
+    header = 'id,protein,density,sig density,position; epitope; score'
     ut.print_sheet(header, params, epi_data, frequencies, filename, "NetMHCPan-4.0", in_signal)
     return epi_data
