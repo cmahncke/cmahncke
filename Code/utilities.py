@@ -1,9 +1,9 @@
 #################################################
 # Cedric Mahncke
 # s-cemahn@uni-greifswald.de
-# Algorithm for combined retrieve of proteins and
+# Algorithm for combined retrieve of proteomes and
 # prediction of their binding epitopes.
-# 11.02.2021: Development.
+# 24.03.2021: Product.
 #################################################
 
 import xlsxwriter
@@ -13,19 +13,107 @@ import time
 import sys
 
 
+# This is to filter important data from the requests based on the algorithm used. Also densities are being calculated
+# and data added to storages inside the functions.
+def request_handle(method, request, indices, pred_vars, epi_storages, signal_storages, protein_name):
+    loc_key, gene_id = indices
+    seq_len, length, threshold, too_long = pred_vars
+    epi_list, epi_data, global_data = epi_storages
+    signal_dict, inside_signal = signal_storages
+
+    temp_epi_list = []
+    temp_epi_data_list = []
+
+    if method.lower() == "netmhcpan":
+        # Remove header (first line is about data fields) of the answer.
+        lines = request.text.splitlines()[1:]
+    else:
+        # Clean the request text from html fragments.
+        stripped = re.sub('<[^<]+?>|&nbsp;|\r|[ ]', '', request.text)
+        # Remove header and empty lines.
+        lines = stripped.splitlines()[2:-1]
+
+    for line in lines:
+        # Filter important information.
+        if method.lower() == "netmhcpan":
+            pred_data = line.split("\t")
+            if len(pred_data) >= 10:
+                position, epitope, score = pred_data[2], pred_data[5], pred_data[9]
+            else:
+                print("Data not complete for epitop with index", lines.index(line), "of protein", gene_id)
+                break
+        else:
+            # Filter important information.
+            pred_data = re.match(r'([0-9]+)([A-Z]+)(-?[0-9]+)', line, re.I).groups()
+            position, epitope, score = pred_data
+
+        # Only take top scoring epitopes.
+        if (method.lower() == "netmhcpan" and float(score) <= threshold) or \
+                (method.lower() == "syfpeithi" and int(score) >= threshold):
+            # Store index of epitopes which are located inside the signal peptide.
+            if signal_dict[loc_key][gene_id].isnumeric() and int(position) <= int(signal_dict[loc_key][gene_id]):
+                inside_signal[loc_key][gene_id].append(lines.index(line) + 3)
+
+            # Add filtered information to list and dictionary about epitopes.
+            temp_epi_list.append(epitope)
+            temp_epi_data_list.append("; ".join([position, epitope, score]))
+
+    # Append protein name for information.
+    epi_data[loc_key][gene_id].append(protein_name)
+
+    # Calculate epitope density.
+    # Overall.
+    epitopes_bound = len(temp_epi_data_list)
+    epitopes_total = seq_len - int(length) + 1
+    if epitopes_total > 0:
+        density = epitopes_bound / epitopes_total
+    else:
+        density = 0
+    # Store density with epitope data.
+    epi_data[loc_key][gene_id].append(density)
+
+    # Inside signal peptide.
+    # If signal is given as number, not 'N/A'.
+    if signal_dict[loc_key][gene_id].isnumeric():
+        signal_length = signal_dict[loc_key][gene_id]
+        signal_epitopes_bound = len(inside_signal[loc_key][gene_id])
+        signal_epitopes_total = int(signal_length) - int(length)
+        if signal_epitopes_total > 0:
+            signal_density = signal_epitopes_bound / signal_epitopes_total
+        else:
+            signal_density = 0
+        # Store signal density with epitope data.
+        epi_data[loc_key][gene_id].append(signal_density)
+    else:
+        epi_data[loc_key][gene_id].append("N/A")
+
+    epi_data[loc_key][gene_id].extend(temp_epi_data_list)
+    # Append note that sequence has been shortened to 2000 AA
+    if too_long:
+        epi_data[loc_key][gene_id].append("Sequence was cut at pos 2000 due to SYFPEITHI Webserver limit.")
+
+    epi_list.extend(temp_epi_list)
+    global_data[gene_id] = [temp_epi_list, epi_data[loc_key][gene_id], inside_signal[loc_key][gene_id]]
+    return 0
+
+
+# Print text to file.
 def print_file(text, file):
     with open(file, 'w') as fi:
         fi.write(text)
     fi.close()
+    return 0
 
 
+# Extend content of existing file with text.
 def extend_file(text, file):
     with open(file, 'a') as f:
         f.write(text)
     f.close()
+    return 0
 
 
-# To write requested data into xlsx files.
+# To write requested data into .xlsx files.
 def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_mark):
     if signal_mark:
         in_signal = signal_mark[0]
@@ -37,8 +125,9 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
     sheet = wb.add_worksheet("method")
     form = wb.add_format()
 
-    # Overview.
+    # Write first page about the method used, parameters set and frequencies of sequences / epitopes.
     form.set_bold()
+    # Method.
     sheet.write(0, 0, method, form)
     # Parameters that has been set.
     sheet.write(2, 0, "Parameter:", form)
@@ -49,7 +138,7 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
             sheet.write(2, col_index + 1, int(params[param]), form.set_num_format("0"))
         else:
             sheet.write(2, col_index + 1, params[param])
-
+    # Frequencies.
     sheet.write(4, 0, "Frequencies over all loci:", form)
     for gene_id in freq_dict:
         row_index = list(freq_dict.keys()).index(gene_id)
@@ -59,7 +148,7 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
         else:
             sheet.write(row_index + 5, 1, freq_dict[gene_id])
 
-    # General data.
+    # Link base.
     base = "http://www.uniprot.org/uniprot/"
     header = header.split(",")
     header.insert(-1, "link")
@@ -89,27 +178,28 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
                 densities = remove_nas(dens_string)
                 q3_density = np.quantile(densities, .75)
             except IndexError:
-                print("No Densities")
+                print(gene_id, "No Densities due to index error.")
         else:
             q3_density = None
 
-        # For every gene in the current location the ID marks the first column.
+        # Each line contains data of one protein that is indexed by ID.
         for gene_id in str_dict[loc_key]:
             form = wb.add_format()
             row_index = list(str_dict[loc_key].keys()).index(gene_id)
 
-            # Color ID if gene density is above Q3 of epitope density.
+            # Color ID if gene density is above Q3 of all epitope densities in this location.
             if q3_density:
                 try:
                     if float(str_dict[loc_key][gene_id][1]) > q3_density:
                         form.set_bg_color('#00FF00')
                 except (TypeError, ValueError) as err:
-                    print(gene_id + " No Density!")
+                    print(gene_id, "No Density due to type or value error")
                     print(err)
 
+            # Write ID as first column.
             sheet.write(row_index + 1, 0, gene_id, form)
 
-            # Color sequenze note in red
+            # Color note about shortened sequences in red
             if str_dict[loc_key][gene_id][-1] == "Sequence has been cut at pos 2000 due to SYFPEITHI online limit.":
                 form.set_bg_color('#FF4500')
 
@@ -126,11 +216,11 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
                     # Numbers in number format.
                     if header[col_index + 1] == ('length' or 'mass' or 'feature(SIGNAL)'):
                         form.set_num_format('0')
-                    # Convert mass to number.
+                    # Convert mass to number and write it in number format.
                     if header[col_index + 1] == 'mass':
                         str_dict[loc_key][gene_id][col_index] = re.sub(",", "", str_dict[loc_key][gene_id][col_index])
                         form.set_num_format('0')
-                    # Print only last lineage entry, not whole lineage
+                    # Write only last lineage entry, not whole lineage
                     if header[col_index + 1] == 'lineage(ALL)':
                         str_dict[loc_key][gene_id][col_index] = str_dict[loc_key][gene_id][col_index].split(",")[-1]
                     # Write Link at the end of each row in link format
@@ -138,23 +228,25 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
                         sheet.write_url(row_index + 1, col_index + 1, base + gene_id, string='UniProt')
                         link += 1
                 else:
-                    # Protein names in italic.
+                    # Write shortened notein red and fill cells at the beginning of the line red.
                     if str_dict[loc_key][gene_id][-1] == "Sequence was cut at pos 2000 due to SYFPEITHI Webserver limit.":
                         if col_index in {0, 1, 2}:
                             form.set_bg_color('#FF4500')
                         if col_index == len(str_dict[loc_key][gene_id]) - 1:
                             form.set_font_color('red')
+                    # Protein names in italic.
                     if col_index == 0:
                         form.set_italic()
                     # Numbers in number format.
                     if col_index in {1, 2}:
                         form.set_num_format('0.##0')
                     # Add border to epitopes
-                    # Write link in link format and add border to epitope data
+                    # Write link in link format and add border to epitope data.
                     if col_index == 3:
                         form.set_left()
                         sheet.write_url(row_index + 1, col_index + 1, base + gene_id, string='UniProt')
                         link += 1
+                    # Write url to uniprot entry.
                     if col_index == 2 and result_len == 3:
                         sheet.write_url(row_index + 1, col_index + 2, base + gene_id, string='UniProt')
                     # Mark the epitopes inside signal.
@@ -170,8 +262,8 @@ def print_sheet(header, params, str_dict, freq_dict, filename, method, *signal_m
                 else:
                     sheet.write(row_index + 1, col_index + 1 + link, str_dict[loc_key][gene_id][col_index], form)
 
-            # At the end of each row there is an url guiding to the UniProt page of the gene
     wb.close()
+    return 0
 
 
 # Deletes redundant sequences from two dictionaries. In particular, the one printed to spreadsheets and the one given
@@ -187,6 +279,7 @@ def del_redundant(data_dict, redundant_ids):
     return popped
 
 
+# Set the parameters for predictions.
 def pred_params(bool):
     if bool:
         allel = "HLA-A*02:01"
@@ -197,11 +290,12 @@ def pred_params(bool):
         allel = input("Allel: ")
         length = input("Length: ")
         print("Scores: highest -> lowest")
-        spt = int(input("SYFPEITHI-Threshold [30 -> 0]: "))
+        spt = int(input("SYFPEITHI-Threshold [~36 -> 0]: "))
         nmp = float(input("NetMHCpan-Threshold [0.0 -> 100.0]: "))
     return allel, length, nmp, spt
 
 
+# Format seconds in hours:minutes:seconds.
 def calc_time(passed_seconds):
     seconds = passed_seconds % 60
     minutes = passed_seconds / 60 % 60
@@ -210,28 +304,33 @@ def calc_time(passed_seconds):
     return time
 
 
+# Print deleted sequences.
 def print_popped(seq_dict):
     answer = input("Print popped sequences? [yes/no] ")
     if answer.lower() == "yes":
+        deleted = 0
         for loc_key in seq_dict:
             print("\n" + loc_key + "\n")
             for gene_id in seq_dict[loc_key]:
-                print(gene_id)
-                print("\n" + seq_dict[loc_key][gene_id] + "\n")
+                print(gene_id, "\t" + seq_dict[loc_key][gene_id] + "\n")
+                deleted += 1
+        print("Overall deleted:", deleted)
         return 0
     else:
         return 0
 
 
+# Remove N/A entries from a list.
 def remove_nas(str_list):
     return [element for element in str_list if element != 'N/A']
 
 
+# Ask for deletion of redundant sequences.
 def if_remove_redundant(example):
     if example:
         answer = 'yes'
     else:
-        answer = input("Delete redundant sequences? [yes/no]: ")
+        answer = input("Delete redundant sequences inside locations? [yes/no]: ")
     if answer.lower() == 'yes':
         return True
     else:
@@ -250,3 +349,4 @@ def progress(count, count_all, count_all_preds, start_time):
     if int(percentage_new) > int(percentage_old):
         sys.stdout.write("\r{0}%".format(int(percentage_new)))
         sys.stdout.flush()
+    return 0
