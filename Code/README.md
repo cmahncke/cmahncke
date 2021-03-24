@@ -58,8 +58,8 @@ Execute the _installation.py_ file in this directory to install all packages.
 The _main.py_ file is now ready for use.
 
 ```
-$ git clone https://github.com/cmahncke
-$ cd .../path/to/the/directory
+$ git clone https://github.com/cmahncke/cmahncke
+$ cd .../path_to_the_directory/cmahncke/Code
 $ python installation.py
 $ python main.py -h
 ```
