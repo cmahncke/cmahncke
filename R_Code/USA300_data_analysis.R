@@ -1,11 +1,11 @@
 ########################### Data collection USA300  ###########################
 ###############################################################################
 # Before executing this file load the 'data_analysis_functions.R' and         #
-# 'staphAureus_data_analysis.R' in this Environment.                          #
+# in this Environment.                                                        #
 ###############################################################################
 
 # Read USA300 Files
-usa300_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/usa300_uniProt.xlsx", sheet="All")
+usa300_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/usa300_uniProt.xlsx", sheet="All")
 
 # Length
 usa300_len <- as.numeric(unlist(usa300_uniProt["LENGTH"]))
@@ -37,8 +37,8 @@ grid.arrange(usa300_up_title, usa300_up_subtt, usa300_up_table, ncol=1,
 
 ##### Epitopes #####
 
-usa300_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/usa300_netMHCpan.xlsx", sheet = "All")
-usa300_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/usa300_SYFPEITHI.xlsx", sheet = "All")
+usa300_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/usa300_netMHCpan.xlsx", sheet = "All")
+usa300_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/usa300_SYFPEITHI.xlsx", sheet = "All")
 
 # Densities
 usa300_nmp_dns <- as.numeric(unlist(usa300_nmp["DENSITY"]))

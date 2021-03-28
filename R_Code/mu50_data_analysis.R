@@ -1,11 +1,11 @@
 ########################### Data collection Mu50  #############################
 ###############################################################################
-# Before executing this file load the 'data_analysis_functions.R' and         #
-# 'staphAureus_data_analysis.R' in this Environment.                          #
+# Before executing this file load the 'data_analysis_functions.R'             #
+# in this Environment.                                                        #
 ###############################################################################
 
 # Read Mu50 / ATCC700699 Files
-mu50_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/mu50_uniProt.xlsx", sheet = "All")
+mu50_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/mu50_uniProt.xlsx", sheet = "All")
 
 # Length
 mu50_len <- as.numeric(unlist(mu50_uniProt["LENGTH"]))
@@ -36,8 +36,8 @@ grid.arrange(mu50_up_title, mu50_up_subtt, mu50_table_up, ncol=1,
 
 ##### Epitopes #####
 
-mu50_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/mu50_netMHCpan.xlsx", sheet = "All")
-mu50_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/mu50_SYFPEITHI.xlsx", sheet = "All")
+mu50_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/mu50_netMHCpan.xlsx", sheet = "All")
+mu50_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/mu50_SYFPEITHI.xlsx", sheet = "All")
 
 # Densities
 mu50_nmp_dns <- as.numeric(unlist(mu50_nmp["DENSITY"]))

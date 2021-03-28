@@ -7,10 +7,10 @@
 ##### Proteins #####
 
 # Read UniProt Files
-pur_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/pur_uniProt.xlsx", sheet = "All")
-scb_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/scb_uniProt.xlsx", sheet = "All")
-stp_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/stp_uniProt.xlsx", sheet = "All")
-tex_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/tex_uniProt.xlsx", sheet = "All")
+pur_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/pur_uniProt.xlsx", sheet = "All")
+scb_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/scb_uniProt.xlsx", sheet = "All")
+stp_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/stp_uniProt.xlsx", sheet = "All")
+tex_h1n1_uniProt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/tex_uniProt.xlsx", sheet = "All")
 
 # Length
 pur_h1n1_len <- as.numeric(unlist(pur_h1n1_uniProt["LENGTH"]))
@@ -67,15 +67,15 @@ grid.arrange(h1n1_up_title, h1n1_up_subtt, h1n1_table_up, ncol=1,
 ##### Epitopes #####
 
 # Read NetMHCpan files
-pur_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/pur_netMHCPan.xlsx", sheet = "All")
-scb_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/scb_netMHCPan.xlsx", sheet = "All")
-stp_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/stp_netMHCPan.xlsx", sheet = "All")
-tex_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/tex_netMHCPan.xlsx", sheet = "All")
+pur_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/pur_netMHCPan.xlsx", sheet = "All")
+scb_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/scb_netMHCPan.xlsx", sheet = "All")
+stp_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/stp_netMHCPan.xlsx", sheet = "All")
+tex_h1n1_nmp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/tex_netMHCPan.xlsx", sheet = "All")
 # Read SYFPEITHI files
-pur_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/pur_SYFPEITHI.xlsx", sheet = "All")
-scb_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/scb_SYFPEITHI.xlsx", sheet = "All")
-stp_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/stp_SYFPEITHI.xlsx", sheet = "All")
-tex_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/tex_SYFPEITHI.xlsx", sheet = "All")
+pur_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/pur_SYFPEITHI.xlsx", sheet = "All")
+scb_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/scb_SYFPEITHI.xlsx", sheet = "All")
+stp_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/stp_SYFPEITHI.xlsx", sheet = "All")
+tex_h1n1_spt <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/tex_SYFPEITHI.xlsx", sheet = "All")
 
 
 # Densities

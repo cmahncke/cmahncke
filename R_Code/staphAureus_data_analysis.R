@@ -7,15 +7,14 @@
 ##### Proteins #####
 
 # Read UniProt Files
-sa_uniProt_cw <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_uniProt.xlsx", sheet = "cell_wall")
-sa_uniProt_cp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_uniProt.xlsx", sheet = "cytoplasm")
-sa_uniProt_sc <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_uniProt.xlsx", sheet = "secreted")
-sa_uniProt_cm <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_uniProt.xlsx", sheet = "cell_membrane")
+sa_uniProt_cw <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_uniProt.xlsx", sheet = "cell_wall")
+sa_uniProt_cp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_uniProt.xlsx", sheet = "cytoplasm")
+sa_uniProt_sc <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_uniProt.xlsx", sheet = "secreted")
+sa_uniProt_cm <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_uniProt.xlsx", sheet = "cell_membrane")
 sa_uniProt_alllocs <- rbind.fill(sa_uniProt_cw,sa_uniProt_cm,sa_uniProt_cp,sa_uniProt_sc)
 sa_uniProt_alllocs$LOCATION=c(rep("cell_wall",nrow(sa_uniProt_cw)),rep("cell_membrane",nrow(sa_uniProt_cm)), 
                               rep("cytoplasm",nrow(sa_uniProt_cp)), rep("secreted",nrow(sa_uniProt_sc)))
-sa_all_seqs <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/sa_distinct_uniProt.xlsx", sheet = "All")
-sa_all_strains <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/sa_all_uniProt.xlsx", sheet = "All")
+sa_all_seqs <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/sa_distinct_uniProt.xlsx", sheet = "All")
 
 # Lengths
 sa_len_cw <- as.numeric( unlist( sa_uniProt_cw["LENGTH"]))
@@ -25,8 +24,6 @@ sa_len_sc <- as.numeric( unlist( sa_uniProt_sc["LENGTH"]))
 sa_len_alllocs <- c( sa_len_cw, sa_len_cp, sa_len_sc)
 # Distinct sequences
 sa_len_all_seq <- as.numeric( unlist( sa_all_seqs["LENGTH"]))
-# All sequences with all strains
-sa_len_all_strains <- as.numeric( unlist( sa_all_strains["LENGTH"]))
 
 # Masses
 sa_mas_cw <- as.numeric(gsub(",","",unlist(sa_uniProt_cw["MASS"], use.names = FALSE)))
@@ -35,7 +32,6 @@ sa_mas_cp <- as.numeric(gsub(",","",unlist(sa_uniProt_cp["MASS"], use.names = FA
 sa_mas_sc <- as.numeric(gsub(",","",unlist(sa_uniProt_sc["MASS"], use.names = FALSE)))
 sa_mas_alllocs <- c( sa_mas_cw, sa_mas_cm, sa_mas_cp, sa_mas_sc)
 sa_mas_all_seq <- as.numeric( gsub( ",", "", unlist( sa_all_seqs["MASS"], use.names = FALSE)))
-sa_mas_all_strains  <- as.numeric( gsub( ",", "", unlist( sa_all_strains["MASS"], use.names = FALSE)))
 
 # Signal regions
 sa_sig_cw_na <- as.numeric( unlist( sa_uniProt_cw["SIGNAL"], use.names = FALSE))
@@ -46,13 +42,6 @@ sa_sig_alllocs_na <- c(sa_sig_cw_na, sa_sig_cm_na, sa_sig_cp_na, sa_sig_sc_na)
 sa_sig_alllocs <- na.omit(sa_sig_alllocs_na)
 sa_sig_all_seq_na <- as.numeric( unlist( sa_all_seqs["SIGNAL"], use.names = FALSE))
 sa_sig_all_seq <- na.omit(sa_sig_all_seq_na)
-sa_sig_all_strains_na <- as.numeric( unlist( sa_all_strains["SIGNAL"], use.names = FALSE))
-sa_sig_all_strains <- na.omit(sa_sig_all_strains_na)
-
-# Lineages
-sa_lineage_na <- find_strain_na( sa_all_strains["LINEAGE"])
-sa_lineage <- find_strain( sa_all_strains["LINEAGE"])
-
 
 # Plot UniProt overview
 sa_UP_overview <- matrix(c(nrow(sa_all_seqs), 
@@ -92,41 +81,34 @@ grid.arrange(sa_up_title, sa_up_subtt, sa_up_table, ncol=1,
 
 # Boxplot of all lengths
 par(mar=c(3.1, 4.1, 0.1, 1.1), tck=0)
-boxplot(sa_len_all_seq, sa_len_cw,sa_len_cp,sa_len_sc,sa_cm_len, col = blues9[2], axis=FALSE,
+boxplot(sa_len_all_seq, sa_len_cw,sa_len_cp,sa_len_sc,sa_len_cm, col = blues9[2], axis=FALSE,
         names=expression(paste(italic("S. aureus"),", Proteom"), "Zellwand", "Zytoplasma",
                          "Extrazellularraum", "Zellmembran"))
 
 par(mar=c(5.1, 4.1, 4.1, 1.1), tck=NA)
 
-# Plot strains
-rotate_x(sort(table(factor(sa_lineage_na)), decreasing = TRUE), 
-         row.names(sort(table(factor(sa_lineage_na, levels = unique(sa_lineage_na))), decreasing = TRUE)),
-         30,2.5, "Alle Lokationen", length(sa_lineage_na), "UniProt")
-
 
 ##### Epitopes #####
 
 # Read NetMHCpan files
-sa_nmp_cw <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_netMHCPan.xlsx", sheet = "cell_wall")
-sa_nmp_cm <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_netMHCPan.xlsx", sheet = "cell_membrane")
-sa_nmp_cp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_netMHCPan.xlsx", sheet = "cytoplasm")
-sa_nmp_sc <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_netMHCPan.xlsx", sheet = "secreted")
+sa_nmp_cw <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_netMHCPan.xlsx", sheet = "cell_wall")
+sa_nmp_cm <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_netMHCPan.xlsx", sheet = "cell_membrane")
+sa_nmp_cp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_netMHCPan.xlsx", sheet = "cytoplasm")
+sa_nmp_sc <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_netMHCPan.xlsx", sheet = "secreted")
 sa_nmp_alllocs <- rbind.fill(sa_nmp_cw,sa_nmp_cm,sa_nmp_cp,sa_nmp_sc)
 sa_nmp_alllocs$LOCATION=c(rep("cell_wall",nrow(sa_nmp_cw)),rep("cell_membrane",nrow(sa_nmp_cm)),
                           rep("cytoplasm",nrow(sa_nmp_cp)),rep("secreted",nrow(sa_nmp_sc)))
-sa_nmp_all_seq <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/sa_distinct_netMHCPan.xlsx", sheet = "All")
-sa_nmp_all_strains <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/sa_all_netMHCpan.xlsx", sheet = "All")
+sa_nmp_all_seq <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/sa_distinct_netMHCPan.xlsx", sheet = "All")
 
 # Read SYFPEITHI files
-sa_spt_cw <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_SYFPEITHI.xlsx", sheet = "cell_wall")
-sa_spt_cm <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_SYFPEITHI.xlsx", sheet = "cell_membrane")
-sa_spt_cp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_SYFPEITHI.xlsx", sheet = "cytoplasm")
-sa_spt_sc <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/example_SA_SYFPEITHI.xlsx", sheet = "secreted")
+sa_spt_cw <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_SYFPEITHI.xlsx", sheet = "cell_wall")
+sa_spt_cm <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_SYFPEITHI.xlsx", sheet = "cell_membrane")
+sa_spt_cp <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_SYFPEITHI.xlsx", sheet = "cytoplasm")
+sa_spt_sc <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/example_SA_SYFPEITHI.xlsx", sheet = "secreted")
 sa_spt_alllocs <- rbind.fill(sa_spt_cw,sa_spt_cm,sa_spt_cp,sa_spt_sc)
 sa_spt_alllocs$LOCATION=c(rep("cell_wall",nrow(sa_spt_cw)),rep("cell_membrane",nrow(sa_spt_cm)),
                           rep("cytoplasm",nrow(sa_spt_cp)),rep("secreted",nrow(sa_spt_sc)))
-sa_spt_all_seq <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/sa_distinct_SYFPEITHI.xlsx", sheet = "All")
-sa_spt_all_strains <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/sa_all_SYFPEITHI.xlsx", sheet = "All")
+sa_spt_all_seq <- read_excel("C:/Users/cedri/OneDrive/Dokumente/BA/Zwischenergebnisse/results/Spreadsheets/sa_distinct_SYFPEITHI.xlsx", sheet = "All")
 
 # Densities
 sa_nmp_dns_cw <- as.numeric(unlist(sa_nmp_cw["DENSITY"]))
@@ -135,7 +117,6 @@ sa_nmp_dns_cp <- as.numeric(unlist(sa_nmp_cp["DENSITY"]))
 sa_nmp_dns_sc <- as.numeric(unlist(sa_nmp_sc["DENSITY"]))
 sa_nmp_dns_alllocs <- c(sa_nmp_dns_cw, sa_nmp_dns_cm, sa_nmp_dns_cp, sa_nmp_dns_sc)
 sa_nmp_dns_all_seq <- as.numeric(unlist(sa_nmp_all_seq["DENSITY"]))
-sa_nmp_dns_all_strains <- as.numeric(unlist(sa_nmp_all_strains["DENSITY"]))
 
 sa_spt_dns_cw <- as.numeric(unlist(sa_spt_cw["DENSITY"]))
 sa_spt_dns_cm <- as.numeric(unlist(sa_spt_cm["DENSITY"]))
@@ -143,7 +124,6 @@ sa_spt_dns_cp <- as.numeric(unlist(sa_spt_cp["DENSITY"]))
 sa_spt_dns_sc <- as.numeric(unlist(sa_spt_sc["DENSITY"]))
 sa_spt_dns_alllocs <- unlist(list.append(sa_spt_dns_cw, sa_spt_dns_cm, sa_spt_dns_cp, sa_spt_dns_sc), use.names = FALSE)
 sa_spt_dns_all_seq <- as.numeric(unlist(sa_spt_all_seq["DENSITY"]))
-sa_spt_dns_all_strains <- as.numeric(unlist(sa_spt_all_strains["DENSITY"]))
 
 # Signal Densities
 sa_nmp_sgd_cw <- as.numeric(unlist(sa_nmp_cw["SIG DENSITY"]))
@@ -152,7 +132,6 @@ sa_nmp_sgd_cp <- as.numeric(unlist(sa_nmp_cp["SIG DENSITY"]))
 sa_nmp_sgd_sc <- as.numeric(unlist(sa_nmp_sc["SIG DENSITY"]))
 sa_nmp_sgd_alllocs <- as.numeric(unlist(list.append(sa_nmp_sgd_cw, sa_nmp_sgd_cm, sa_nmp_sgd_cp, sa_nmp_sgd_sc), use.names = FALSE))
 sa_nmp_sgd_all_seq <- as.numeric(unlist(sa_nmp_all_seq["SIG DENSITY"]))
-sa_nmp_sgd_all_strains <- as.numeric(unlist(sa_nmp_all_strains["SIG DENSITY"]))
 
 sa_spt_sgd_cw <- as.numeric(unlist(sa_spt_cw["SIG DENSITY"]))
 sa_spt_sgd_cm <- as.numeric(unlist(sa_spt_cm["SIG DENSITY"]))
@@ -160,7 +139,6 @@ sa_spt_sgd_cp <- as.numeric(unlist(sa_spt_cp["SIG DENSITY"]))
 sa_spt_sgd_sc <- as.numeric(unlist(sa_spt_sc["SIG DENSITY"]))
 sa_spt_sgd_alllocs <- as.numeric(unlist(list.append(sa_spt_sgd_cw, sa_spt_sgd_cw, sa_spt_sgd_cp, sa_spt_sgd_sc), use.names = FALSE))
 sa_spt_sgd_all_seq <- as.numeric(unlist(sa_spt_all_seq["SIG DENSITY"]))
-sa_spt_sgd_all_strains <- as.numeric(unlist(sa_spt_all_strains["SIG DENSITY"]))
 
 # Epitope counts
 sa_nmp_cnt_cw <- count_epis(sa_nmp_cw)
@@ -169,7 +147,6 @@ sa_nmp_cnt_cp <- count_epis(sa_nmp_cp)
 sa_nmp_cnt_sc <- count_epis(sa_nmp_sc)
 sa_nmp_cnt_alllocs <- c(sa_nmp_cnt_cw, sa_nmp_cnt_cm, sa_nmp_cnt_cp, sa_nmp_cnt_sc)
 sa_nmp_cnt_all_seq <- count_epis(sa_nmp_all_seq)
-sa_nmp_cnt_all_strains <- count_epis(sa_nmp_all_strains)
 
 sa_spt_cnt_cw <- count_epis(sa_spt_cw)
 sa_spt_cnt_cm <- count_epis(sa_spt_cm)
@@ -177,7 +154,6 @@ sa_spt_cnt_cp <- count_epis(sa_spt_cp)
 sa_spt_cnt_sc <- count_epis(sa_spt_sc)
 sa_spt_cnt_alllocs <- c(sa_spt_cnt_cw, sa_spt_cnt_cm, sa_spt_cnt_cp, sa_spt_cnt_sc)
 sa_spt_cnt_all_seq <- count_epis(sa_spt_all_seq)
-sa_spt_cnt_all_strains <- count_epis(sa_spt_all_strains)
 
 sa_cnts <- function(){
         plot(sa_nmp_cnt_all_seq, sa_spt_cnt_all_seq, xlab = "Anzahl Epitope, NetMHCpan", ylab = "Anzahl Epitope, SYFPEITHI",
@@ -244,7 +220,7 @@ sa_Pred_theme <- ttheme_minimal(colhead = list(bg_params = list(fill="white")),
 sa_nmp_table <- tableGrob(sa_Pred_overview_nmp, theme = sa_Pred_theme)
 sa_spt_table <- tableGrob(sa_Pred_overview_spt, theme = sa_Pred_theme)
 sa_pred_title <- textGrob("Vorhersagen")
-sa_nmp_subtt <- textGrob(expression(paste(italic("S. aureus"), ", oben: NetMHCpan, unten: SYFPEITHI")))
+sa_pred_subtt <- textGrob(expression(paste(italic("S. aureus"), ", oben: NetMHCpan, unten: SYFPEITHI")))
 sa_nmp_table <- gtable_add_grob(sa_nmp_table, grobs = segmentsGrob(x0 = unit(0,"npc"),
                                                                    y0 = unit(0,"npc"),
                                                                    x1 = unit(1,"npc"),
@@ -257,20 +233,34 @@ sa_spt_table <- gtable_add_grob(sa_spt_table, grobs = segmentsGrob(x0 = unit(0,"
                                                                    y1 = unit(0,"npc"),
                                                                    gp = gpar(lwd = 1.5)),
                                 t = 2,l=6,r=1 )
-grid.arrange(sa_pred_title, sa_nmp_subtt, sa_nmp_table, sa_spt_table, ncol=1, heights = unit(c(10,10,50,50), rep("mm", 4)))
+A <- textGrob("A")
+B <- textGrob("B")
+space <- textGrob("")
+grid.arrange(sa_pred_title, space, sa_pred_subtt, space, sa_nmp_table, A,
+             sa_spt_table, B, ncol=2, heights = unit(c(10,10,50,50), rep("mm", 4)),
+             widths = unit(c(150,90), rep("mm",2)))
 
 # Boxplots about densities
 boxplot(sa_nmp_dns_all_seq,sa_nmp_dns_cw,sa_nmp_dns_cp,sa_nmp_dns_sc,sa_nmp_dns_cm,
         names = c(expression(paste(italic("S. aureus"),", Proteom"), "Zellwand", "Zytoplasma",
                              "Extrazellularraum", "Zellmembran")), col = blues9[2])
 # Boxplots about signal densities
-boxplot(sa_nmp_sgd_all_seq,sa_nmp_sgd_cw,sa_nmp_sgd_cp,sa_nmp_sgd_sc,sa_cm_nmp_sgd,
+boxplot(sa_nmp_sgd_all_seq,sa_nmp_sgd_cw,sa_nmp_sgd_cp,sa_nmp_sgd_sc,sa_nmp_sgd_cm,
         names = c(expression(paste(italic("S. aureus"),", Proteom"), "Zellwand", "Zytoplasma",
                              "Extrazellularraum", "Zellmembran")), col = blues9[2])
 # Boxplots about epitope numbers
-boxplot(sa_nmp_cnt_all_seq,sa_nmp_cnt_cw,sa_nmp_cnt_cp,sa_nmp_cnt_sc,sa_cm_nmp_cnt,
+boxplot(sa_nmp_cnt_all_seq,sa_nmp_cnt_cw,sa_nmp_cnt_cp,sa_nmp_cnt_sc,sa_nmp_cnt_cm,
         names = c(expression(paste(italic("S. aureus"),", Proteom"), "Zellwand", "Zytoplasma",
                              "Extrazellularraum", "Zellmembran")), col = blues9[2])
+
+
+sa_dns_diff <- matrix(round(c(mean(na.omit(sa_nmp_sgd_all_seq-sa_nmp_dns_all_seq)),
+                              mean(na.omit(sa_spt_sgd_all_seq-sa_nmp_dns_all_seq))), digits = 4),
+                      nrow = 2)
+colnames(sa_dns_diff) <- c("Differenz Epitopdichten")
+rownames(sa_dns_diff) <- c("NetMHCpan", "SYFPEITHI")
+sa_dns_diff_table <- tableGrob(sa_dns_diff, theme=table_theme1)
+grid.arrange(sa_dns_diff_table)
 
 
 
@@ -373,14 +363,15 @@ sa_seq_cor_overview <- matrix(c(rep("",2),rep(c("N","S"),7),
                                                  sa_cntsgd_nmp_cor, sa_cntsgd_spt_cor,
                                                  sa_dnssgd_nmp_cor, sa_dnssgd_spt_cor)),
                                       digits = 4),
-                                format(c("<1e-318", sa_lensig_pvl,
-                                "<1e-318", "<1e-318",
-                                sa_lendns_nmp_pvl, sa_lendns_spt_pvl,
-                                sa_lensgd_nmp_pvl, sa_lensgd_spt_pvl,
-                                sa_sigsgd_nmp_pvl, sa_sigsgd_spt_pvl,
-                                sa_cntdns_nmp_pvl, sa_cntdns_spt_pvl,
-                                sa_cntsgd_nmp_pvl, sa_cntsgd_spt_pvl,
-                                sa_dnssgd_nmp_pvl, sa_dnssgd_spt_pvl), digits = 2)),
+                                format(c("<0.05", "<0.05",
+                                         "<0.05", "<0.05",
+                                         sa_lendns_nmp_pvl, 
+                                         sa_lendns_spt_pvl,
+                                         "<0.05", "<0.05",
+                                         "<0.05", "<0.05",
+                                         "<0.05", "<0.05",
+                                         sa_cntsgd_nmp_pvl, "<0.05",
+                                         "<0.05", "<0.05"), digits = 2)),
                               nrow = 16, ncol = 3)
 rownames(sa_seq_cor_overview) <- c("Länge ~ Masse", "Länge ~ Signallänge",
                                    "Länge ~ Anz. Epitope",
@@ -464,15 +455,7 @@ sa_loc_cor_overview <- matrix(c("","","",rep(c("N","S"),3),
                                                  sa_sgdloc_nmp_fvl,
                                                  sa_sgdloc_spt_fvl)),
                                     digits = 1),
-                              format(c(sa_lenloc_pvl,
-                                                 sa_masloc_pvl,
-                                                 sa_sigloc_pvl,
-                                                 sa_cntloc_nmp_pvl,
-                                                 sa_cntloc_spt_pvl,
-                                                 sa_dnsloc_nmp_pvl,
-                                                 sa_dnsloc_spt_pvl,
-                                                 sa_sgdloc_nmp_pvl,
-                                                 sa_sgdloc_spt_pvl), digits = 2)),
+                              rep("<0.05",9)),
                               nrow = 9, ncol = 3)
 rownames(sa_loc_cor_overview) <- c("Länge","Masse","Signallänge","Anz. Epitope",
                                    "Anz. Epitope","Epitopdichte","Epitopdichte",
@@ -489,7 +472,7 @@ for (row in 2:10) {
 }
 grid.arrange(sa_loc_cor_title1, sa_loc_cor_title2, sa_loc_cor_table, heights = unit(c(5,20,80), rep("mm", 3)))
 
-par(mar = c(5.1, 6.1, 4.1, 1.1), (mfrow=c(3,3)))
+par(mar = c(5.1, 6.1, 4.1, 1.1), mfrow=c(3,3))
 tuk_plot(TukeyHSD(aov(as.numeric(unlist(sa_uniProt_alllocs$LENGTH))~sa_uniProt_alllocs$LOCATION)), 
          "Länge", "", rev(c("Zlw-Zmb", "Ztp-Zmb","Exz-Zmb","Ztp-Zlw","Exz-Zlw","Exz-Ztp")), 1,1)
 tuk_plot(TukeyHSD(aov(as.numeric(unlist(sa_uniProt_alllocs$MASS))~sa_uniProt_alllocs$LOCATION)),
@@ -510,91 +493,3 @@ tuk_plot(TukeyHSD(aov(as.numeric(unlist(sa_spt_alllocs$`SIG DENSITY`))~sa_spt_al
          "Singal-Epitopdichte, SYFPEITHI", "", rev(c("Zlw-Zmb","Exz-Zmb","Exz-Zlw")), 1,1)
 par(mfrow=c(1,1))
 par(mar = c(5.1, 4.1, 4.1, 2.1))
-
-
-# Plot Strain Epidata
-par(mfrow=c(3,2))
-# Strain - Epitope Count
-c1 <- rotate_x( tapply(sa_nmp_cnt_all_strains, sa_lineage, mean),
-                row.names( tapply(sa_nmp_cnt_all_strains, sa_lineage, mean)),
-                30,6, "Epitope pro Stamm", length(sa_nmp_cnt_all_strains), "NetMHCpan")
-c2 <- rotate_x( tapply(sa_spt_cnt_all_strains, sa_lineage, mean),
-                row.names( tapply(sa_spt_cnt_all_strains, sa_lineage, mean)),
-                30,6, "Epitope pro Stamm", length(sa_spt_cnt_all_strains), "SYFPEITHI")
-# Strain - Density
-d1 <- rotate_x( tapply(na.omit(sa_nmp_dns_all_strains), 
-                       sa_lineage[which(!is.na(sa_nmp_dns_all_strains))], mean),
-                row.names( tapply(na.omit(sa_nmp_dns_all_strains), 
-                                  sa_lineage[which(!is.na(sa_nmp_dns_all_strains))], mean)),
-                30,6, "Epitopdichte pro Stamm", length(na.omit(sa_nmp_dns_all_strains)), "NetMHCpan")
-d2 <- rotate_x( tapply(sa_spt_dns_all_strains, sa_lineage, mean),
-                row.names( tapply(sa_spt_dns_all_strains, sa_lineage, mean)),
-                30,6, "Epitopdichte pro Stamm", length(sa_spt_dns_all_strains), "SYFPEITHI")
-# Strain - Signal Denstiy
-s1 <- rotate_x( tapply(na.omit(sa_nmp_sgd_all_strains), 
-                       sa_lineage[which(!is.na(sa_nmp_sgd_all_strains))], mean),
-                row.names( tapply(na.omit(sa_nmp_sgd_all_strains), 
-                                  sa_lineage[which(!is.na(sa_nmp_sgd_all_strains))], mean)),
-                30,6, "Signal-Epitopdichte\npro Stamm", length(sa_nmp_sgd_all_strains), "NetMHCpan")
-s2 <- rotate_x( tapply(na.omit(sa_spt_sgd_all_strains), 
-                       sa_lineage[which(!is.na(sa_spt_sgd_all_strains))], mean),
-                row.names( tapply(na.omit(sa_spt_sgd_all_strains), 
-                                  sa_lineage[which(!is.na(sa_spt_sgd_all_strains))], mean)),
-                30,6, "Signal-Epitopdichte\npro Stamm", length(sa_spt_sgd_all_strains), "SYFPEITHI")
-par(mfrow=c(1,1))
-
-# Strain - UniProt Variations
-sa_strainlen_fvl <- unlist(summary(aov(sa_len_all_strains  ~ sa_lineage)))["F value1"]
-sa_strainlen_pvl <- unlist(summary(aov(sa_len_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_strainmas_fvl <- unlist(summary(aov(sa_mas_all_strains  ~ sa_lineage)))["F value1"]
-sa_strainmas_pvl <- unlist(summary(aov(sa_mas_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_strainsig_fvl <- unlist(summary(aov(sa_sig_all_strains_na ~ sa_lineage)))["F value1"]
-sa_strainsig_pvl <- unlist(summary(aov(sa_sig_all_strains_na ~ sa_lineage)))["Pr(>F)1"]
-
-# Correlation Strain - Epidata
-sa_nmp_straincnt_fvl <- unlist(summary(aov(sa_nmp_cnt_all_strains  ~ sa_lineage)))["F value1"]
-sa_nmp_straincnt_pvl <- unlist(summary(aov(sa_nmp_cnt_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_spt_straincnt_fvl <- unlist(summary(aov(sa_spt_cnt_all_strains  ~ sa_lineage)))["F value1"]
-sa_spt_straincnt_pvl <- unlist(summary(aov(sa_spt_cnt_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_nmp_straindns_fvl <- unlist(summary(aov(sa_nmp_dns_all_strains  ~ sa_lineage)))["F value1"]
-sa_nmp_straindns_pvl <- unlist(summary(aov(sa_nmp_dns_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_spt_straindns_fvl <- unlist(summary(aov(sa_spt_dns_all_strains  ~ sa_lineage)))["F value1"]
-sa_spt_straindns_pvl <- unlist(summary(aov(sa_spt_dns_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_nmp_strainsgd_fvl <- unlist(summary(aov(sa_nmp_sgd_all_strains  ~ sa_lineage)))["F value1"]
-sa_nmp_strainsgd_pvl <- unlist(summary(aov(sa_nmp_sgd_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-sa_spt_strainsgd_fvl <- unlist(summary(aov(sa_spt_sgd_all_strains  ~ sa_lineage)))["F value1"]
-sa_spt_strainsgd_pvl <- unlist(summary(aov(sa_spt_sgd_all_strains  ~ sa_lineage)))["Pr(>F)1"]
-
-# Plot Strain Correlations
-sa_pred_cor_overview <- matrix(round(c(sa_strainlen_fvl, 
-                                       sa_strainmas_fvl, 
-                                       sa_strainsig_fvl,
-                                       sa_nmp_straincnt_fvl,
-                                       sa_spt_straincnt_fvl,
-                                       sa_nmp_straindns_fvl,
-                                       sa_spt_straindns_fvl,
-                                       sa_nmp_strainsgd_fvl,
-                                       sa_spt_strainsgd_fvl), digits = 4),
-                               round(c(sa_strainlen_pvl,
-                                       sa_strainmas_pvl,
-                                       sa_strainsig_pvl,
-                                       sa_nmp_straincnt_pvl,
-                                       sa_spt_straincnt_pvl,
-                                       sa_nmp_straindns_pvl,
-                                       sa_spt_straindns_pvl,
-                                       sa_nmp_strainsgd_pvl,
-                                       sa_spt_strainsgd_pvl), digits = 4),
-                               nrow = 9, ncol = 2)
-rownames(sa_pred_cor_overview) <- c("Länge","Masse","Signallänge",
-                                    "Anz. Epitope (N)",
-                                    "Anz. Epitope (S)",
-                                    "Epitopdichte (N)",
-                                    "Epitopdichte (S)",
-                                    "Signal-Epitopdichte (N)",
-                                    "Signal-Epitopdichte (S)")
-colnames(sa_pred_cor_overview) <- c("F-Wert", "P-Wert")
-sa_pred_cor_table <- tableGrob(sa_pred_cor_overview, theme = table_theme1)
-sa_pred_cor_title1 <- textGrob("Varianzanalyse der Sequenz- und Epitopdaten unter den Stämmen")
-sa_pred_cor_title2 <- textGrob(expression(paste(italic("S. aureus"),", alle Sequenzen")))
-grid.arrange(sa_pred_cor_title1, sa_pred_cor_title2, sa_pred_cor_table, ncol=1, heights = unit(c(10,10,80), rep("mm", 3)))
-

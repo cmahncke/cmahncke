@@ -36,14 +36,14 @@ comp_UP_overview <- matrix(c(c(nrow(usa300_uniProt),
                                      mean(na.omit(stp_h1n1_sig)),
                                      mean(na.omit(tex_h1n1_sig))))),
                           nrow = 7, ncol = 4)
-colnames(comp_UP_overview) <- c("Anz. Sequenzen", "LÃ¤nge [AS]",
-                                "Anz. Signalpeptide","SignallÃ¤nge [AS]")
+colnames(comp_UP_overview) <- c("Anz. Sequenzen", "Länge [AS]",
+                                "Anz. Signalpeptide","Signallänge [AS]")
 rownames(comp_UP_overview) <- c("S. aureus, USA300", "S. aureus, Mu50", "SARS-CoV-2",
                                 "H1N1, Puerto Rico / 1934", "H1N1, S. Canterbury / 2000",
                                 "H1N1, St.Petersburg / 2006", "H1N1, Texas / 2007")
 comp_up_table <- tableGrob(comp_UP_overview, theme = table_theme)
-comp_up_title <- textGrob("UniProt Ãœbersicht")
-comp_up_subtt <- textGrob(expression(paste("StÃ¤mme von ", italic("S. aureus, SARS-Coronaviren, Influenzaviren A"))))
+comp_up_title <- textGrob("UniProt Übersicht")
+comp_up_subtt <- textGrob(expression(paste("Stämme von ", italic("S. aureus, SARS-CoV-2, Influenza A"))))
 grid.arrange(comp_up_title, comp_up_subtt, comp_up_table, ncol=1,
              heights = unit(c(10,10,65),rep("mm",3)))
 
@@ -59,7 +59,7 @@ boxplot(usa300_len, mu50_len, col = blues9[2], axis=FALSE,
 boxplot(cov_len, col = blues9[2], show.names=TRUE, names=expression(italic("SARS-CoV-2")))
 boxplot(pur_h1n1_len, scb_h1n1_len, stp_h1n1_len, tex_h1n1_len, col = blues9[2], 
         axis=FALSE, names = c(expression(italic("H1N1, Puerto Rico / 1934"),
-                                         italic("H1N1, S.Canterbury / 2000"),
+                                         italic("H1N1, S. Canterbury / 2000"),
                                          italic("H1N1, St.Petersburg / 2006"),
                                          italic("H1N1, Texas / 2007"))))
 par(mar=c(5.1, 4.1, 4.1, 1.1), tck=NA)
@@ -147,10 +147,14 @@ rownames(comp_Pred_overview_spt) <- c("S. aureus, USA300", "S. aureus, Mu50", "S
                                       "H1N1, St.Petersburg / 2006", "H1N1, Texas / 2007")
 comp_nmp_table <- tableGrob(comp_Pred_overview_nmp, theme = table_theme)
 comp_spt_table <- tableGrob(comp_Pred_overview_spt, theme = table_theme)
-comp_pred_title <- textGrob("Vorhersagen Ãœbersicht")
-comp_nmp_subtt <- textGrob(expression("Oben: NetMHCpan, unten: SYFPEITHI"))
-grid.arrange(comp_pred_title, comp_nmp_subtt, comp_nmp_table,
-             comp_spt_table, ncol=1, heights = unit(c(10,10,60,60), rep("mm", 4)))
+comp_pred_title <- textGrob("Vorhersagen Übersicht")
+comp_pred_subtt <- textGrob(expression("Oben: NetMHCpan, unten: SYFPEITHI"))
+A <- textGrob("A")
+B <- textGrob("B")
+space <- textGrob("")
+grid.arrange(comp_pred_title, space, comp_pred_subtt, space, comp_nmp_table, A,
+             comp_spt_table,B, ncol=2, heights = unit(c(10,10,60,60), rep("mm", 4)),
+             widths = unit(c(150,100), rep("mm",2)))
 
 # Boxplot about densities
 layout(mat = matrix(c(1, 2, 1, 2, 3, 3), 
@@ -164,7 +168,7 @@ boxplot(usa300_nmp_dns, mu50_nmp_dns, col = blues9[2], axis=FALSE,
 boxplot(cov_nmp_dns, col = blues9[2], show.names=TRUE, names=expression(italic("SARS-CoV-2")))
 boxplot(pur_h1n1_nmp_dns, scb_h1n1_nmp_dns, stp_h1n1_nmp_dns, tex_h1n1_nmp_dns, col = blues9[2], 
         axis=FALSE, names = c(expression(italic("H1N1, Puerto Rico / 1934"),
-                                         italic("H1N1, S.Canterbury / 2000"),
+                                         italic("H1N1, S. Canterbury / 2000"),
                                          italic("H1N1, St.Petersburg / 2006"),
                                          italic("H1N1, Texas / 2007"))))
 # Boxplot about signal densities
@@ -179,7 +183,7 @@ boxplot(usa300_nmp_sgd, mu50_nmp_sgd, col = blues9[2], axis=FALSE,
 boxplot(cov_nmp_sgd, col = blues9[2], show.names=TRUE, names=expression(italic("SARS-CoV-2")))
 boxplot(pur_h1n1_nmp_sgd, scb_h1n1_nmp_sgd, stp_h1n1_nmp_sgd, tex_h1n1_nmp_sgd, col = blues9[2], 
         axis=FALSE, names = c(expression(italic("H1N1, Puerto Rico / 1934"),
-                                         italic("H1N1, S.Canterbury / 2000"),
+                                         italic("H1N1, S. Canterbury / 2000"),
                                          italic("H1N1, St.Petersburg / 2006"),
                                          italic("H1N1, Texas / 2007"))))
 # Boxplot about epitope counts
@@ -194,7 +198,7 @@ boxplot(usa300_nmp_cnt, mu50_nmp_cnt, col = blues9[2], axis=FALSE,
 boxplot(cov_nmp_cnt, col = blues9[2], show.names=TRUE, names=expression(italic("SARS-CoV-2")))
 boxplot(pur_h1n1_nmp_cnt, scb_h1n1_nmp_cnt, stp_h1n1_nmp_cnt, tex_h1n1_nmp_cnt, col = blues9[2], 
         axis=FALSE, names = c(expression(italic("H1N1, Puerto Rico / 1934"),
-                                         italic("H1N1, S.Canterbury / 2000"),
+                                         italic("H1N1, S. Canterbury / 2000"),
                                          italic("H1N1, St.Petersburg / 2006"),
                                          italic("H1N1, Texas / 2007"))))
 par(mar=c(5.1, 4.1, 4.1, 1.1), tck=NA)
@@ -202,75 +206,75 @@ par(mar=c(5.1, 4.1, 4.1, 1.1), tck=NA)
 # Plot Correlations
 comp_up_cor_overview <- matrix(c(rep("",4),rep(c("N","","S",""),6),
                                  format(c(usa300_lenmas_cor,
-                                                     "<1e-318",
+                                                     "<0.05",
                                                     usa300_lensig_cor,
                                                     usa300_lensig_pvl,
                                                     usa300_lencnt_nmp_cor,
-                                                    usa300_lencnt_nmp_pvl,
+                                         "<0.05",
                                                     usa300_lencnt_spt_cor,
-                                                    usa300_lencnt_spt_pvl,
+                                         "<0.05",
                                                     usa300_lendns_nmp_cor,
-                                                    usa300_lendns_nmp_pvl,
+                                         "<0.05",
                                                     usa300_lendns_spt_cor,
                                                     usa300_lendns_spt_pvl,
                                                     usa300_lensgd_nmp_cor,
                                                     usa300_lensgd_nmp_pvl,
                                                     usa300_lensgd_spt_cor,
-                                                    usa300_lensgd_spt_pvl,
+                                         "<0.05",
                                                     usa300_cntdns_nmp_cor,
-                                                    usa300_cntdns_nmp_pvl,
+                                         "<0.05",
                                                     usa300_cntdns_spt_cor,
-                                                    usa300_cntdns_spt_pvl,
+                                         "<0.05",
                                                     usa300_cntsgd_nmp_cor,
                                                     usa300_cntsgd_nmp_pvl,
                                                     usa300_cntsgd_spt_cor,
                                                     usa300_cntsgd_spt_pvl,
                                                     usa300_dnssgd_nmp_cor,
-                                                    usa300_dnssgd_nmp_pvl,
+                                         "<0.05",
                                                     usa300_dnssgd_spt_cor,
-                                                    usa300_dnssgd_spt_pvl),
-                                       digits = 2),
+                                         "<0.05"),
+                                       digits = 3),
                                  format(c(mu50_lenmas_cor,
-                                                     "<1e-318",
+                                          "<0.05",
                                                     mu50_lensig_cor,
-                                                    mu50_lensig_pvl,
+                                          "<0.05",
                                                     mu50_lencnt_nmp_cor,
-                                                    mu50_lencnt_nmp_pvl,
+                                          "<0.05",
                                                     mu50_lencnt_spt_cor,
-                                                    mu50_lencnt_spt_pvl,
+                                          "<0.05",
                                                     mu50_lendns_nmp_cor,
                                                     mu50_lendns_nmp_pvl,
                                                     mu50_lendns_spt_cor,
                                                     mu50_lendns_spt_pvl,
                                                     mu50_lensgd_nmp_cor,
-                                                    mu50_lensgd_nmp_pvl,
+                                          "<0.05",
                                                     mu50_lensgd_spt_cor,
-                                                    mu50_lensgd_spt_pvl,
+                                          "<0.05",
                                                     mu50_cntdns_nmp_cor,
-                                                    mu50_cntdns_nmp_pvl,
+                                          "<0.05",
                                                     mu50_cntdns_spt_cor,
-                                                    mu50_cntdns_spt_pvl,
+                                          "<0.05",
                                                     mu50_cntsgd_nmp_cor,
                                                     mu50_cntsgd_nmp_pvl,
                                                     mu50_cntsgd_spt_cor,
                                                     mu50_cntsgd_spt_pvl,
                                                     mu50_dnssgd_nmp_cor,
-                                                    mu50_dnssgd_nmp_pvl,
+                                          "<0.05",
                                                     mu50_dnssgd_spt_cor,
-                                                    mu50_dnssgd_spt_pvl),
+                                          "<0.05"),
                                        digits = 2),
                                  format(c(cov_lenmas_cor,
-                                                    cov_lenmas_pvl,
+                                          "<0.05",
                                                     cov_lensig_cor,
-                                                    "<1e-318",
+                                          "<0.05",
                                                     cov_lencnt_nmp_cor,
-                                                    cov_lencnt_nmp_pvl,
+                                          "<0.05",
                                                     cov_lencnt_spt_cor,
-                                                    cov_lencnt_spt_pvl,
+                                          "<0.05",
                                                     cov_lendns_nmp_cor,
-                                                    cov_lendns_nmp_pvl,
+                                          "<0.05",
                                                     cov_lendns_spt_cor,
-                                                    cov_lendns_spt_pvl,
+                                          "<0.05",
                                                     cov_lensgd_nmp_cor,
                                                     cov_lensgd_nmp_pvl,
                                                     cov_lensgd_spt_cor,
@@ -290,16 +294,16 @@ comp_up_cor_overview <- matrix(c(rep("",4),rep(c("N","","S",""),6),
                                        digits = 2),
                                  
                                  format(c(pur_h1n1_lenmas_cor,
-                                                    pur_h1n1_lenmas_pvl), digits = 2),
+                                          "<0.05"), digits = 2),
                                  rep("N/A",2),
                                  format(c(pur_h1n1_lencnt_nmp_cor,
-                                                    pur_h1n1_lencnt_nmp_pvl,
+                                          "<0.05",
                                                     pur_h1n1_lencnt_spt_cor,
-                                                    pur_h1n1_lencnt_spt_pvl,
+                                          "<0.05",
                                                     pur_h1n1_lendns_nmp_cor,
                                                     pur_h1n1_lendns_nmp_pvl,
                                                     pur_h1n1_lendns_spt_cor,
-                                                    pur_h1n1_lendns_spt_pvl), digits = 2),
+                                          "<0.05"), digits = 2),
                                  rep("N/A",4),
                                  format(c(pur_h1n1_cntdns_nmp_cor,
                                                     pur_h1n1_cntdns_nmp_pvl,
@@ -308,12 +312,12 @@ comp_up_cor_overview <- matrix(c(rep("",4),rep(c("N","","S",""),6),
                                  rep("N/A",8),
                                  
                                  format(c(scb_h1n1_lenmas_cor,
-                                                    scb_h1n1_lenmas_pvl), digits = 2),
+                                          "<0.05"), digits = 2),
                                  rep("N/A",2),
                                  format(c(scb_h1n1_lencnt_nmp_cor,
-                                                    scb_h1n1_lencnt_nmp_pvl,
+                                          "<0.05",
                                                     scb_h1n1_lencnt_spt_cor,
-                                                    scb_h1n1_lencnt_spt_pvl,
+                                          "<0.05",
                                                     scb_h1n1_lendns_nmp_cor,
                                                     scb_h1n1_lendns_nmp_pvl,
                                                     scb_h1n1_lendns_spt_cor,
@@ -326,16 +330,16 @@ comp_up_cor_overview <- matrix(c(rep("",4),rep(c("N","","S",""),6),
                                  rep("N/A",8),
                                  
                                  format(c(stp_h1n1_lenmas_cor,
-                                                    stp_h1n1_lenmas_pvl), digits = 2),
+                                          "<0.05"), digits = 2),
                                  rep("N/A",2),
                                  format(c(stp_h1n1_lencnt_nmp_cor,
-                                                    stp_h1n1_lencnt_nmp_pvl,
+                                          "<0.05",
                                                     stp_h1n1_lencnt_spt_cor,
-                                                    stp_h1n1_lencnt_spt_pvl,
+                                          "<0.05",
                                                     stp_h1n1_lendns_nmp_cor,
                                                     stp_h1n1_lendns_nmp_pvl,
                                                     stp_h1n1_lendns_spt_cor,
-                                                    stp_h1n1_lendns_spt_pvl), digits = 2),
+                                          "<0.05"), digits = 2),
                                  rep("N/A",4),
                                  format(c(stp_h1n1_cntdns_nmp_cor,
                                                     stp_h1n1_cntdns_nmp_pvl,
@@ -344,12 +348,12 @@ comp_up_cor_overview <- matrix(c(rep("",4),rep(c("N","","S",""),6),
                                  rep("N/A",8),
                                  
                                  format(c(tex_h1n1_lenmas_cor,
-                                                    tex_h1n1_lenmas_pvl), digits = 2),
+                                          "<0.05"), digits = 2),
                                  rep("N/A",2),
                                  format(c(tex_h1n1_lencnt_nmp_cor,
-                                                    tex_h1n1_lencnt_nmp_pvl,
+                                          "<0.05",
                                                     tex_h1n1_lencnt_spt_cor,
-                                                    tex_h1n1_lencnt_spt_pvl,
+                                          "<0.05",
                                                     tex_h1n1_lendns_nmp_cor,
                                                     tex_h1n1_lendns_nmp_pvl,
                                                     tex_h1n1_lendns_spt_cor,
@@ -364,13 +368,13 @@ comp_up_cor_overview <- matrix(c(rep("",4),rep(c("N","","S",""),6),
                                  "Korrelation", "P-Wert",
                                  rep("",26)),
                                nrow = 28, ncol = 9)
-rownames(comp_up_cor_overview) <- c("LÃ¤nge ~ Masse","", "LÃ¤nge ~ SignallÃ¤nge","",
-                                      "LÃ¤nge ~ Anz. Epitope","",
-                                      "LÃ¤nge ~ Anz. Epitope","",
-                                      "LÃ¤nge ~ Epitopdichte","",
-                                      "LÃ¤nge ~ Epitopdichte","",
-                                      "LÃ¤nge ~ Signal-Epitopdichte","",
-                                      "LÃ¤nge ~ Signal-Epitopdichte","",
+rownames(comp_up_cor_overview) <- c("Länge ~ Masse","", "Länge ~ Signallänge","",
+                                      "Länge ~ Anz. Epitope","",
+                                      "Länge ~ Anz. Epitope","",
+                                      "Länge ~ Epitopdichte","",
+                                      "Länge ~ Epitopdichte","",
+                                      "Länge ~ Signal-Epitopdichte","",
+                                      "Länge ~ Signal-Epitopdichte","",
                                       "Anz. Epitope ~ Epitopdichte","",
                                       "Anz. Epitope ~ Epitopdichte","",
                                       "Anz. Epitope ~ Signal-Epitopdichte","",
@@ -399,7 +403,7 @@ comp_uniProt_all$STRAIN <- c(rep("USA300",nrow(usa300_uniProt)),
                              rep("Mu50",nrow(mu50_uniProt)),
                              rep("SARS-CoV-2",nrow(cov_uniProt)),
                              rep("H1N1 Puerto Rico/1934",nrow(pur_h1n1_uniProt)),
-                             rep("H1N1 S.Canterbury/2000",nrow(scb_h1n1_uniProt)),
+                             rep("H1N1 S. Canterbury/2000",nrow(scb_h1n1_uniProt)),
                              rep("H1N1 St.Petersburg/2006",nrow(stp_h1n1_uniProt)),
                              rep("H1N1 Texas/2007",nrow(tex_h1n1_uniProt)))
 comp_nmp_all <- rbind.fill(usa300_nmp, mu50_nmp, cov_nmp, pur_h1n1_nmp,
@@ -408,7 +412,7 @@ comp_nmp_all$STRAIN <- c(rep("USA300",nrow(usa300_nmp)),
                              rep("Mu50",nrow(mu50_nmp)),
                              rep("SARS-CoV-2",nrow(cov_nmp)),
                              rep("H1N1 Puerto Rico/1934",nrow(pur_h1n1_nmp)),
-                             rep("H1N1 S.Canterbury/2000",nrow(scb_h1n1_nmp)),
+                             rep("H1N1 S. Canterbury/2000",nrow(scb_h1n1_nmp)),
                              rep("H1N1 St.Petersburg/2006",nrow(stp_h1n1_nmp)),
                              rep("H1N1 Texas/2007",nrow(tex_h1n1_nmp)))
 comp_spt_all <- rbind.fill(usa300_spt, mu50_spt, cov_spt, pur_h1n1_spt,
@@ -417,7 +421,7 @@ comp_spt_all$STRAIN <- c(rep("USA300",nrow(usa300_spt)),
                              rep("Mu50",nrow(mu50_spt)),
                              rep("SARS-CoV-2",nrow(cov_spt)),
                              rep("H1N1 Puerto Rico/1934",nrow(pur_h1n1_spt)),
-                             rep("H1N1 S.Canterbury/2000",nrow(scb_h1n1_spt)),
+                             rep("H1N1 S. Canterbury/2000",nrow(scb_h1n1_spt)),
                              rep("H1N1 St.Petersburg/2006",nrow(stp_h1n1_spt)),
                              rep("H1N1 Texas/2007",nrow(tex_h1n1_spt)))
 comp_nmp_cnt_all <- count_epis(comp_nmp_all)
@@ -425,89 +429,88 @@ comp_spt_cnt_all <- count_epis(comp_spt_all)
 
 comp_cnts <- function(){
   plot(comp_nmp_cnt_all, comp_spt_cnt_all, xlab = "Anzahl Epitope, NetMHCpan", ylab = "Anzahl Epitope, SYFPEITHI",
-       main = expression(paste("Sequenzen der VergleichsstÃ¤mme von ", italic("S. aureus, SARS-CoV-2, Influenza A"))), col.main="white")
+       main = expression(paste("Sequenzen der Vergleichsstämme von ", italic("S. aureus, SARS-CoV-2, Influenza A"))), col.main="white")
   abline(coef = c(0,1), col="red")}
 
 # Strain Variations
-comp_lenloc <- lm(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)
-comp_masloc <- lm(as.numeric(unlist(comp_uniProt_all$MASS))~comp_uniProt_all$STRAIN)
-comp_sigloc <- lm(as.numeric(unlist(comp_uniProt_all$SIGNAL))~comp_uniProt_all$STRAIN)
-comp_cntloc_nmp <- lm(comp_nmp_cnt_all~comp_nmp_all$STRAIN)
-comp_dnsloc_nmp <- lm(as.numeric(unlist(comp_nmp_all$DENSITY))~comp_nmp_all$STRAIN)
-comp_sgdloc_nmp <- lm(as.numeric(unlist(comp_nmp_all$`SIG DENSITY`))~comp_nmp_all$STRAIN)
-comp_cntloc_spt <- lm(comp_spt_cnt_all~comp_spt_all$STRAIN)
-comp_dnsloc_spt <- lm(as.numeric(unlist(comp_spt_all$DENSITY))~comp_spt_all$STRAIN)
-comp_sgdloc_spt <- lm(as.numeric(unlist(comp_spt_all$`SIG DENSITY`))~comp_spt_all$STRAIN)
+comp_lenstr <- lm(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)
+comp_masstr <- lm(as.numeric(unlist(comp_uniProt_all$MASS))~comp_uniProt_all$STRAIN)
+comp_sigstr <- lm(as.numeric(unlist(comp_uniProt_all$SIGNAL))~comp_uniProt_all$STRAIN)
+comp_cntstr_nmp <- lm(comp_nmp_cnt_all~comp_nmp_all$STRAIN)
+comp_dnsstr_nmp <- lm(as.numeric(unlist(comp_nmp_all$DENSITY))~comp_nmp_all$STRAIN)
+comp_sgdstr_nmp <- lm(as.numeric(unlist(comp_nmp_all$`SIG DENSITY`))~comp_nmp_all$STRAIN)
+comp_cntstr_spt <- lm(comp_spt_cnt_all~comp_spt_all$STRAIN)
+comp_dnsstr_spt <- lm(as.numeric(unlist(comp_spt_all$DENSITY))~comp_spt_all$STRAIN)
+comp_sgdstr_spt <- lm(as.numeric(unlist(comp_spt_all$`SIG DENSITY`))~comp_spt_all$STRAIN)
 
 par(mfrow=c(3,3))
-hist(rstandard(comp_lenloc))
-hist(rstandard(comp_masloc))
-hist(rstandard(comp_sigloc))
-hist(rstandard(comp_cntloc_nmp))
-hist(rstandard(comp_dnsloc_nmp))
-hist(rstandard(comp_sgdloc_nmp))
-hist(rstandard(comp_cntloc_spt))
-hist(rstandard(comp_dnsloc_spt))
-hist(rstandard(comp_sgdloc_spt))
+hist(rstandard(comp_lenstr))
+hist(rstandard(comp_masstr))
+hist(rstandard(comp_sigstr))
+hist(rstandard(comp_cntstr_nmp))
+hist(rstandard(comp_dnsstr_nmp))
+hist(rstandard(comp_sgdstr_nmp))
+hist(rstandard(comp_cntstr_spt))
+hist(rstandard(comp_dnsstr_spt))
+hist(rstandard(comp_sgdstr_spt))
 par(mfrow=c(1,1))
 
-comp_lenloc_fvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)))["F value1"]
-comp_lenloc_pvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)))["Pr(>F)1"]
-comp_masloc_fvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$MASS))~comp_uniProt_all$STRAIN)))["F value1"]
-comp_masloc_pvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$MASS))~comp_uniProt_all$STRAIN)))["Pr(>F)1"]
-comp_sigloc_fvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$SIGNAL))~comp_uniProt_all$STRAIN)))["F value1"]
-comp_sigloc_pvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$SIGNAL))~comp_uniProt_all$STRAIN)))["Pr(>F)1"]
+comp_lenstr_fvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)))["F value1"]
+comp_lenstr_pvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)))["Pr(>F)1"]
+comp_masstr_fvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$MASS))~comp_uniProt_all$STRAIN)))["F value1"]
+comp_masstr_pvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$MASS))~comp_uniProt_all$STRAIN)))["Pr(>F)1"]
+comp_sigstr_fvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$SIGNAL))~comp_uniProt_all$STRAIN)))["F value1"]
+comp_sigstr_pvl <- unlist(summary(aov(as.numeric(unlist(comp_uniProt_all$SIGNAL))~comp_uniProt_all$STRAIN)))["Pr(>F)1"]
 
-comp_cntloc_nmp_fvl <- unlist(summary(aov(comp_nmp_cnt_all~comp_nmp_all$STRAIN)))["F value1"]
-comp_cntloc_nmp_pvl <- unlist(summary(aov(comp_nmp_cnt_all~comp_nmp_all$STRAIN)))["Pr(>F)1"]
-comp_dnsloc_nmp_fvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$DENSITY))~comp_nmp_all$STRAIN)))["F value1"]
-comp_dnsloc_nmp_pvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$DENSITY))~comp_nmp_all$STRAIN)))["Pr(>F)1"]
-comp_sgdloc_nmp_fvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$`SIG DENSITY`))~comp_nmp_all$STRAIN)))["F value1"]
-comp_sgdloc_nmp_pvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$`SIG DENSITY`))~comp_nmp_all$STRAIN)))["Pr(>F)1"]
+comp_cntstr_nmp_fvl <- unlist(summary(aov(comp_nmp_cnt_all~comp_nmp_all$STRAIN)))["F value1"]
+comp_cntstr_nmp_pvl <- unlist(summary(aov(comp_nmp_cnt_all~comp_nmp_all$STRAIN)))["Pr(>F)1"]
+comp_dnsstr_nmp_fvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$DENSITY))~comp_nmp_all$STRAIN)))["F value1"]
+comp_dnsstr_nmp_pvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$DENSITY))~comp_nmp_all$STRAIN)))["Pr(>F)1"]
+comp_sgdstr_nmp_fvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$`SIG DENSITY`))~comp_nmp_all$STRAIN)))["F value1"]
+comp_sgdstr_nmp_pvl <- unlist(summary(aov(as.numeric(unlist(comp_nmp_all$`SIG DENSITY`))~comp_nmp_all$STRAIN)))["Pr(>F)1"]
 
-comp_cntloc_spt_fvl <- unlist(summary(aov(comp_spt_cnt_all~comp_spt_all$STRAIN)))["F value1"]
-comp_cntloc_spt_pvl <- unlist(summary(aov(comp_spt_cnt_all~comp_spt_all$STRAIN)))["Pr(>F)1"]
-comp_dnsloc_spt_fvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$DENSITY))~comp_spt_all$STRAIN)))["F value1"]
-comp_dnsloc_spt_pvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$DENSITY))~comp_spt_all$STRAIN)))["Pr(>F)1"]
-comp_sgdloc_spt_fvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$`SIG DENSITY`))~comp_spt_all$STRAIN)))["F value1"]
-comp_sgdloc_spt_pvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$`SIG DENSITY`))~comp_spt_all$STRAIN)))["Pr(>F)1"]
+comp_cntstr_spt_fvl <- unlist(summary(aov(comp_spt_cnt_all~comp_spt_all$STRAIN)))["F value1"]
+comp_cntstr_spt_pvl <- unlist(summary(aov(comp_spt_cnt_all~comp_spt_all$STRAIN)))["Pr(>F)1"]
+comp_dnsstr_spt_fvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$DENSITY))~comp_spt_all$STRAIN)))["F value1"]
+comp_dnsstr_spt_pvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$DENSITY))~comp_spt_all$STRAIN)))["Pr(>F)1"]
+comp_sgdstr_spt_fvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$`SIG DENSITY`))~comp_spt_all$STRAIN)))["F value1"]
+comp_sgdstr_spt_pvl <- unlist(summary(aov(as.numeric(unlist(comp_spt_all$`SIG DENSITY`))~comp_spt_all$STRAIN)))["Pr(>F)1"]
 
-comp_loc_cor_overview <- matrix(c(rep("",3), rep(c("N","S"),3),
-                                  round(as.numeric(c(comp_lenloc_fvl,
-                                                   comp_masloc_fvl,
-                                                   comp_sigloc_fvl,
-                                                   comp_cntloc_nmp_fvl,
-                                                   comp_cntloc_spt_fvl,
-                                                   comp_dnsloc_nmp_fvl,
-                                                   comp_dnsloc_spt_fvl,
-                                                   comp_sgdloc_nmp_fvl,
-                                                   comp_sgdloc_spt_fvl)),
+comp_str_cor_overview <- matrix(c(rep("",3), rep(c("N","S"),3),
+                                  round(as.numeric(c(comp_lenstr_fvl,
+                                                   comp_masstr_fvl,
+                                                   comp_sigstr_fvl,
+                                                   comp_cntstr_nmp_fvl,
+                                                   comp_cntstr_spt_fvl,
+                                                   comp_dnsstr_nmp_fvl,
+                                                   comp_dnsstr_spt_fvl,
+                                                   comp_sgdstr_nmp_fvl,
+                                                   comp_sgdstr_spt_fvl)),
                                       digits = 2),
-                                format(as.numeric(c(comp_lenloc_pvl,
-                                                   comp_masloc_pvl,
-                                                   comp_sigloc_pvl,
-                                                   comp_cntloc_nmp_pvl,
-                                                   comp_cntloc_spt_pvl,
-                                                   comp_dnsloc_nmp_pvl,
-                                                   comp_dnsloc_spt_pvl,
-                                                   comp_sgdloc_nmp_pvl,
-                                                   comp_sgdloc_spt_pvl)),
-                                      digits = 2)),
+                                c("<0.05",
+                                  "<0.05",
+                                  round(comp_sigstr_pvl, digits = 3),
+                                  "<0.05",
+                                  round(comp_cntstr_spt_pvl, digits = 3),
+                                  "<0.05",
+                                  "<0.05",
+                                  "<0.05",
+                                  "<0.05")),
                               nrow = 9, ncol = 3)
-rownames(comp_loc_cor_overview) <- c("LÃ¤nge","Masse","SignallÃ¤nge","Anz. Epitope",
+rownames(comp_str_cor_overview) <- c("Länge","Masse","Signallänge","Anz. Epitope",
                                    "Anz. Epitope","Epitopdichte","Epitopdichte",
                                    "Signal-Epitopdichte","Signal-Epitopdichte")
-colnames(comp_loc_cor_overview) <- c("","F-Wert", "P-Wert")
-comp_loc_cor_title1 <- textGrob("Varianzanalyse der Sequenz- und Epitopdaten unter den StÃ¤mmen")
-comp_loc_cor_title2 <- textGrob(expression(paste("StÃ¤mme von ", italic("S. aureus, SARS-Coronaviren, Influenzaviren A"))))
-comp_loc_cor_table <- tableGrob(comp_loc_cor_overview, theme = table_theme1)
+colnames(comp_str_cor_overview) <- c("","F-Wert", "P-Wert")
+comp_str_cor_title1 <- textGrob("Varianzanalyse der Sequenz- und Epitopdaten unter den Stämmen")
+comp_str_cor_title2 <- textGrob(expression(paste("Stämme von ", italic("S. aureus, SARS-Coronaviren, Influenzaviren A"))))
+comp_str_cor_table <- tableGrob(comp_str_cor_overview, theme = table_theme1)
 
-l <- comp_loc_cor_table$layout
+l <- comp_str_cor_table$layout
 for (row in 2:10) {
-  comp_loc_cor_table$grobs[ which(l$t==row & l$l==2 & l$name=="core-bg")][[1]][["gp"]] <- gpar(fill="white", col="white")
-  comp_loc_cor_table$grobs[ which(l$t==row & l$l==2 & l$name=="core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
+  comp_str_cor_table$grobs[ which(l$t==row & l$l==2 & l$name=="core-bg")][[1]][["gp"]] <- gpar(fill="white", col="white")
+  comp_str_cor_table$grobs[ which(l$t==row & l$l==2 & l$name=="core-fg")][[1]][["gp"]] <- gpar(fontface="bold")
 }
-grid.arrange(comp_loc_cor_title1, comp_loc_cor_title2, comp_loc_cor_table, heights = unit(c(5,20,80), rep("mm", 3)))
+grid.arrange(comp_str_cor_title1, comp_str_cor_title2, comp_str_cor_table, heights = unit(c(5,20,80), rep("mm", 3)))
 
 par(mfrow=c(3,3), cex.lab=1.5, cex.axis=1.5)
 tuk_plot(TukeyHSD(aov(as.numeric(unlist(comp_uniProt_all$LENGTH))~comp_uniProt_all$STRAIN)), 
