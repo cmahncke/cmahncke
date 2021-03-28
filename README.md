@@ -6,13 +6,13 @@
 
 ***
 
-This repository contains all data for my bachelor thesis about epitope prediction of proteome data.
+This repository contains data I used for my bachelor thesis about epitope prediction of proteomes.
 
 /Code contains all relevant python files.
 
 /R_Code contains all R files that have been used for statistical evaluation.
 
-/Results contains all output files that have been used in this bachelor thesis.
+/Results contains all output files that have been produced by the /Code files.
 
 ***
 
